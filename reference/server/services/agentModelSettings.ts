@@ -75,9 +75,25 @@ export function loadAgentModelSettings(userId: number): AgentModelSettings {
     const e = entry as { provider?: unknown; model?: unknown; effort?: unknown };
     // D6 legacy compat: backfilled rows from before the `provider` field read
     // back as 'anthropic'. The model is still validated against that provider.
+    let provider = e.provider ?? 'anthropic';
+    let model = e.model;
+    // Migration for corrupt entries written by the original opencode-go
+    // implementation: the UI had a stale-closure bug that saved
+    // `opencode/` prefixed models under the `opencode-go` provider.
+    // Re-prefix them to `opencode-go/<bareModelId>` so they pass the
+    // now-correct prefix check.
+    if (
+      provider === 'opencode-go' &&
+      typeof model === 'string' &&
+      model.startsWith('opencode/') &&
+      model.length > 'opencode/'.length
+    ) {
+      const bareModelId = model.slice('opencode/'.length);
+      model = `opencode-go/${bareModelId}`;
+    }
     const candidate = {
-      provider: e.provider ?? 'anthropic',
-      model: e.model,
+      provider,
+      model,
       effort: e.effort ?? null,
     };
     if (!isValidAgentModelSetting(candidate)) {
