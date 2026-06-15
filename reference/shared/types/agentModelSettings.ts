@@ -133,7 +133,8 @@ export function isValidAgentModelSetting(
   if (
     setting.provider !== 'anthropic' &&
     setting.provider !== 'openai' &&
-    setting.provider !== 'opencode'
+    setting.provider !== 'opencode' &&
+    setting.provider !== 'opencode-go'
   ) {
     return false;
   }

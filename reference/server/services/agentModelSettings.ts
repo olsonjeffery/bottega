@@ -122,7 +122,7 @@ export async function ensureUserAgentModelSettings(userId: number): Promise<bool
   if (!chosen) return false;
 
   let firstOpenCodeModelId: string | null = null;
-  if (chosen === 'opencode') {
+  if (chosen === 'opencode' || chosen === 'opencode-go') {
     try {
       const models = await listOpenCodeModels(userId);
       firstOpenCodeModelId = models[0]?.id ?? null;

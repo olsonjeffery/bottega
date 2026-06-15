@@ -123,7 +123,7 @@ export function isModelForProvider(
   // and fetched live, so we only enforce the `opencode/<id>` prefix
   // shape. Anthropic and OpenAI use a static enum so we still gate
   // against the canonical list.
-  if (provider === 'opencode') return isOpenCodeModel(model);
+  if (provider === 'opencode' || provider === 'opencode-go') return isOpenCodeModel(model);
   return modelsForProvider(provider).includes(model);
 }
 
