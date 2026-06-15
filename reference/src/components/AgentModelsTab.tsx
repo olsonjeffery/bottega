@@ -64,10 +64,12 @@ function AgentModelsTab() {
           api.userAgentModelSettings.connectedProviders(),
         ]);
         if (providersRes.ok) {
-          const body = await providersRes.json();
-          setConnected(body.connected);
-          if (body.connected.includes('opencode')) void loadOpenCodeModels();
-        }
+           const body = await providersRes.json();
+           setConnected(body.connected);
+           if (body.connected.includes('opencode') || body.connected.includes('opencode-go')) {
+             void loadOpenCodeModels();
+           }
+         }
         if (settingsRes.ok) {
           const body = await settingsRes.json();
           if (body.needsSeeding) {
@@ -97,10 +99,10 @@ function AgentModelsTab() {
       if (patch.provider && patch.provider !== current.provider) {
         const p = patch.provider;
         const nextModel =
-          p === 'opencode' ? (openCodeModels?.[0]?.id ?? null) : MODELS_FOR_UI[p][0]!;
+          p === 'opencode' || p === 'opencode-go' ? (openCodeModels?.[0]?.id ?? null) : MODELS_FOR_UI[p][0]!;
         if (nextModel === null) {
           setError(
-            'OpenCode catalog is still loading or no Zen key is configured. ' +
+            'OpenCode catalog is still loading or no key is configured. ' +
               'Connect OpenCode in Settings → Providers, then try again.',
           );
           return;

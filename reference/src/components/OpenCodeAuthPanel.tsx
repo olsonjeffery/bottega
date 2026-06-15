@@ -97,24 +97,14 @@ export function OpenCodeAuthPanel() {
          <p className="text-sm text-muted-foreground">
            Paste your OpenCode API key. One key unlocks every model in either the
            Zen catalog (Qwen, Kimi, DeepSeek, Claude, GPT, GLM, MiniMax, …) or the
-           Go catalog, depending on which key you generate.
-           Get a Zen key at{' '}
+           Go catalog, depending on how your account is configured on{' '}
            <a
-             href="https://opencode.ai/zen"
+             href="https://opencode.ai"
              target="_blank"
              rel="noopener noreferrer"
              className="text-blue-600 dark:text-blue-400 underline inline-flex items-center gap-1"
            >
-             opencode.ai/zen <ExternalLink className="w-3 h-3" />
-           </a>
-           {' '}or a Go key at{' '}
-           <a
-             href="https://opencode.ai/go"
-             target="_blank"
-             rel="noopener noreferrer"
-             className="text-blue-600 dark:text-blue-400 underline inline-flex items-center gap-1"
-           >
-             opencode.ai/go <ExternalLink className="w-3 h-3" />
+             opencode.ai <ExternalLink className="w-3 h-3" />
            </a>
            . The key is stored per-user under
            <code className="ml-1">~/.config/bottega/users/&lt;id&gt;/opencode-data/opencode/auth.json</code>
