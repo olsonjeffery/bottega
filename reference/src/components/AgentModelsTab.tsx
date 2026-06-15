@@ -38,10 +38,12 @@ function AgentModelsTab() {
   const [error, setError] = useState<string | null>(null);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
 
-  const loadOpenCodeModels = useCallback(async () => {
+  const loadOpenCodeModels = useCallback(async (provider: 'opencode' | 'opencode-go' = 'opencode') => {
     setLoadingOpenCodeModels(true);
     try {
-      const res = await api.openCodeAuth.models();
+      const res = provider === 'opencode-go' 
+        ? await api.openCodeAuth.modelsGo()
+        : await api.openCodeAuth.models();
       if (!res.ok) {
         setOpenCodeModels([]);
         return;
@@ -88,7 +90,7 @@ function AgentModelsTab() {
     })();
   }, [loadOpenCodeModels]);
 
-  const updateAgentSetting = useCallback(
+   const updateAgentSetting = useCallback(
     async (agent: AgentType, patch: Partial<AgentModelSetting>) => {
       if (!settings) return;
       const current = settings[agent];
@@ -98,6 +100,12 @@ function AgentModelsTab() {
       let merged: AgentModelSetting;
       if (patch.provider && patch.provider !== current.provider) {
         const p = patch.provider;
+        
+        // If switching to a different OpenCode variant, reload models for that variant
+        if ((p === 'opencode' || p === 'opencode-go') && (current.provider === 'opencode' || current.provider === 'opencode-go')) {
+          await loadOpenCodeModels(p);
+        }
+        
         const nextModel =
           p === 'opencode' || p === 'opencode-go' ? (openCodeModels?.[0]?.id ?? null) : MODELS_FOR_UI[p][0]!;
         if (nextModel === null) {
@@ -135,7 +143,7 @@ function AgentModelsTab() {
         setSaving(false);
       }
     },
-    [settings, openCodeModels],
+    [settings, openCodeModels, loadOpenCodeModels],
   );
 
   if (isLoading) {
