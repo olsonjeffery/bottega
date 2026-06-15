@@ -149,10 +149,12 @@ export const MODELS_FOR_UI = {
   anthropic: ANTHROPIC_MODELS,
   openai: OPENAI_MODELS,
   opencode: OPENCODE_MODELS,
+  'opencode-go': OPENCODE_MODELS,
 } as const;
 
 export const EFFORTS_FOR_UI = {
   anthropic: ANTHROPIC_EFFORTS,
   openai: OPENAI_EFFORTS,
   opencode: OPENCODE_EFFORTS,
+  'opencode-go': OPENCODE_EFFORTS,
 } as const;
