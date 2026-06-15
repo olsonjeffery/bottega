@@ -54,8 +54,8 @@ describe('shared/providers/models', () => {
       expect([...OPENCODE_EFFORTS]).toEqual([]);
     });
 
-    it('enumerates all three providers', () => {
-      expect([...PROVIDERS]).toEqual(['anthropic', 'openai', 'opencode']);
+    it('enumerates all four providers', () => {
+      expect([...PROVIDERS]).toEqual(['anthropic', 'openai', 'opencode', 'opencode-go']);
     });
   });
 
@@ -75,16 +75,18 @@ describe('shared/providers/models', () => {
     it('effortsForProvider returns the OpenAI list', () => {
       expect(effortsForProvider('openai')).toEqual(OPENAI_EFFORTS);
     });
-    it('effortsForProvider returns an empty list for OpenCode', () => {
+    it('effortsForProvider returns an empty list for OpenCode (both Zen and Go)', () => {
       expect(effortsForProvider('opencode')).toEqual([]);
+      expect(effortsForProvider('opencode-go')).toEqual([]);
     });
   });
 
   describe('type guards', () => {
-    it('isProvider accepts anthropic/openai/opencode and rejects bogus values', () => {
+    it('isProvider accepts anthropic/openai/opencode/opencode-go and rejects bogus values', () => {
       expect(isProvider('anthropic')).toBe(true);
       expect(isProvider('openai')).toBe(true);
       expect(isProvider('opencode')).toBe(true);
+      expect(isProvider('opencode-go')).toBe(true);
       expect(isProvider('claude')).toBe(false);
       expect(isProvider('')).toBe(false);
       expect(isProvider(undefined)).toBe(false);

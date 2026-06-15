@@ -60,7 +60,7 @@ export type OpenCodeModel = `opencode/${string}`;
 export const OPENCODE_EFFORTS = [] as const;
 export type OpenCodeEffort = never;
 
-export const PROVIDERS = ['anthropic', 'openai', 'opencode'] as const;
+export const PROVIDERS = ['anthropic', 'openai', 'opencode', 'opencode-go'] as const;
 
 /**
  * Return the model list for a provider. Used by the settings UI and
@@ -70,13 +70,13 @@ export const PROVIDERS = ['anthropic', 'openai', 'opencode'] as const;
 export function modelsForProvider(provider: Provider): readonly string[] {
   if (provider === 'anthropic') return ANTHROPIC_MODELS;
   if (provider === 'openai') return OPENAI_MODELS;
-  return OPENCODE_MODELS;
+  return OPENCODE_MODELS; // Both 'opencode' and 'opencode-go' use the live catalog
 }
 
 export function effortsForProvider(provider: Provider): readonly string[] {
   if (provider === 'anthropic') return ANTHROPIC_EFFORTS;
   if (provider === 'openai') return OPENAI_EFFORTS;
-  return OPENCODE_EFFORTS;
+  return OPENCODE_EFFORTS; // Both 'opencode' and 'opencode-go' have no efforts
 }
 
 export function isProvider(value: unknown): value is Provider {

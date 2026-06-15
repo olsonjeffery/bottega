@@ -20,7 +20,8 @@ import type { OpenCodeModelEntry } from '../../shared/api/openCodeAuth';
 export const PROVIDER_LABELS: Record<Provider, string> = {
   anthropic: 'Claude',
   openai: 'OpenAI',
-  opencode: 'OpenCode',
+  opencode: 'OpenCode Zen',
+  'opencode-go': 'OpenCode Go',
 };
 
 // Static labels for the two enum-backed providers. OpenCode labels come from
@@ -33,12 +34,12 @@ const MODEL_LABELS: Record<string, string> = {
   'gpt-5.4-mini': 'GPT-5.4 mini',
 };
 
-/** First selectable model for a provider, given the (maybe-unloaded) Zen catalog. */
+/** First selectable model for a provider, given the (maybe-unloaded) OpenCode catalog (Zen or Go). */
 export function firstModelFor(
   p: Provider,
   openCodeModels: OpenCodeModelEntry[] | null,
 ): string {
-  if (p === 'opencode') {
+  if (p === 'opencode' || p === 'opencode-go') {
     return openCodeModels && openCodeModels.length > 0 ? openCodeModels[0]!.id : '';
   }
   return MODELS_FOR_UI[p][0] ?? '';
@@ -117,16 +118,16 @@ export function useProviderModelSelection(): ProviderModelSelection {
   }, []);
 
   // Switch provider + reset the model to that provider's first option. For
-  // OpenCode this kicks off the (lazy, per-user) catalog fetch on first use.
+  // OpenCode (Zen or Go) this kicks off the (lazy, per-user) catalog fetch on first use.
   const applyProvider = useCallback(
     (next: Provider) => {
       setProvider(next);
-      if (next === 'opencode') {
+      if (next === 'opencode' || next === 'opencode-go') {
         if (openCodeModels === null) {
           setModel('');
           void loadOpenCodeModels();
         } else {
-          setModel(firstModelFor('opencode', openCodeModels));
+          setModel(firstModelFor(next, openCodeModels));
         }
       } else {
         setModel(firstModelFor(next, openCodeModels));
@@ -145,7 +146,7 @@ export function useProviderModelSelection(): ProviderModelSelection {
 
   // Snap to the preferred connected provider once we know what's connected
   // (the set loads asynchronously), unless the user has already picked one by
-  // hand. Also lazily fetches the OpenCode catalog when OpenCode is the
+  // hand. Also lazily fetches the OpenCode catalog when OpenCode (Zen or Go) is the
   // default — so a connect-OpenCode-only user opens the modal with their
   // models already populated.
   useEffect(() => {
@@ -153,17 +154,17 @@ export function useProviderModelSelection(): ProviderModelSelection {
     const preferred = preferredProvider(connected);
     if (preferred !== provider) {
       applyProvider(preferred);
-    } else if (preferred === 'opencode' && openCodeModels === null && !loadingOpenCodeModels) {
+    } else if ((preferred === 'opencode' || preferred === 'opencode-go') && openCodeModels === null && !loadingOpenCodeModels) {
       setModel('');
       void loadOpenCodeModels();
     }
   }, [connected, provider, openCodeModels, loadingOpenCodeModels, applyProvider, loadOpenCodeModels]);
 
   // Options for the model dropdown — static enum for anthropic/openai, the
-  // live Zen catalog for opencode (empty until fetched or when no key).
+  // live OpenCode catalog (Zen or Go) for opencode/opencode-go (empty until fetched or when no key).
   const modelOptions = useMemo<Array<{ value: string; label: string }>>(
     () =>
-      provider === 'opencode'
+      provider === 'opencode' || provider === 'opencode-go'
         ? (openCodeModels ?? []).map((m) => ({
             value: m.id,
             label: m.status === 'deprecated' ? `${m.name} (deprecated)` : m.name,
